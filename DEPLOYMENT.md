@@ -2,7 +2,7 @@
 
 This guide covers the complete process for deploying the Renderbase Zapier integration, from initial setup through production deployment.
 
-**Last Updated:** December 3, 2025
+**Last Updated:** January 2026
 
 ## Table of Contents
 
@@ -43,151 +43,116 @@ The Renderbase backend must have the following ready:
 
 ## Integration Overview
 
-### Triggers (6)
+### Triggers (3)
 
 | Key | Label | Description | Type |
 |-----|-------|-------------|------|
-| `email_sent` | Email Sent | Triggers when an email is successfully sent | Webhook |
-| `email_delivered` | Email Delivered | Triggers when an email is delivered to recipient's mailbox | Webhook |
-| `email_opened` | Email Opened | Triggers when a recipient opens an email | Webhook |
-| `email_clicked` | Link Clicked | Triggers when a recipient clicks a tracked link | Webhook |
-| `email_bounced` | Email Bounced | Triggers when an email bounces (hard or soft) | Webhook |
-| `unsubscribe_received` | Unsubscribe Received | Triggers when a recipient unsubscribes | Webhook |
+| `document_completed` | Document Completed | Triggers when a document is successfully generated | Webhook |
+| `document_failed` | Document Failed | Triggers when document generation fails | Webhook |
+| `batch_completed` | Batch Completed | Triggers when a batch generation completes | Webhook |
 
-### Actions (5)
+### Actions (3)
 
 | Key | Label | Description | Features |
 |-----|-------|-------------|----------|
-| `send_email` | Send Email | Send an email using a Renderbase template | Dynamic variable fields |
-| `send_email_pdf` | Send Email with Generated PDF | Send email with auto-generated PDF attachment | Dual dynamic fields (email + PDF) |
-| `send_email_excel` | Send Email with Generated Excel | Send email with auto-generated Excel attachment | Dual dynamic fields (email + Excel) |
-| `send_bulk_email` | Send Bulk Email | Send emails to multiple recipients | Batch processing |
-| `send_starter_pack_email` | Send Starter Pack Email | Send email using a starter pack template | Pre-configured template selection |
+| `generate_pdf` | Generate PDF | Generate a PDF document from a template | Dynamic variable fields |
+| `generate_excel` | Generate Excel | Generate an Excel document from a template | Dynamic variable fields |
+| `generate_batch` | Generate Batch | Generate multiple documents from a template | Batch processing |
 
-### Searches (2)
+### Searches (1)
 
 | Key | Label | Description | Visibility |
 |-----|-------|-------------|------------|
-| `find_email` | Find Email | Search for an email by ID, recipient, or status | Public |
-| `template_variables` | Get Template Variables | Fetch Zapier-compatible fields for a template | Hidden (internal use) |
+| `find_document_job` | Find Document Job | Search for a document job by ID or status | Public |
 
 ### Hidden Triggers (for Dynamic Dropdowns)
 
 | Key | Purpose |
 |-----|---------|
-| `template_list` | Populate email template dropdown |
+| `template_list` | Populate template dropdown |
 | `template_list_pdf` | Populate PDF template dropdown |
 | `template_list_excel` | Populate Excel template dropdown |
+| `template_variables` | Get template variables for dynamic fields |
 
 ---
 
 ## Action Field Reference
 
-### Send Email (`send_email`)
+### Generate PDF (`generate_pdf`)
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `templateId` | dropdown | Yes | Email template (dynamic dropdown) |
-| `to` | string | Yes | Recipient email address |
-| `toName` | string | No | Recipient name |
-| `subject` | string | No | Email subject (overrides template) |
-| `fromName` | string | No | Sender display name |
-| `replyTo` | string | No | Reply-to email address |
+| `templateId` | dropdown | Yes | PDF template (dynamic dropdown) |
+| `filename` | string | No | Custom filename (without .pdf extension) |
+| `workspaceId` | string | No | Workspace ID (optional) |
 | `variables` | text | No | JSON template variables (legacy) |
-| `trackOpens` | boolean | No | Enable open tracking (default: true) |
-| `trackClicks` | boolean | No | Enable click tracking (default: true) |
 | `var_*` | dynamic | No | Template-specific variable fields |
 
 **Dynamic Fields:** When a template is selected, the integration fetches the template's variable schema and generates individual input fields for each variable. Object variables are flattened using `__` notation (e.g., `customer__name`), and array variables become line items.
 
-### Send Email with Generated PDF (`send_email_pdf`)
-
-Includes all fields from `send_email` plus:
+### Generate Excel (`generate_excel`)
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `pdfTemplateId` | dropdown | Yes | PDF attachment template |
-| `pdfFileName` | string | No | Custom PDF filename (without .pdf) |
-| `pdfVariables` | text | No | JSON variables for PDF (legacy) |
-| `pdf_var_*` | dynamic | No | PDF template-specific variable fields |
-
-### Send Email with Generated Excel (`send_email_excel`)
-
-Includes all fields from `send_email` plus:
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `excelTemplateId` | dropdown | Yes | Excel attachment template |
-| `excelFileName` | string | No | Custom Excel filename (without .xlsx) |
-| `excelVariables` | text | No | JSON variables for Excel (legacy) |
-| `excel_var_*` | dynamic | No | Excel template-specific variable fields |
-
-### Send Starter Pack Email (`send_starter_pack_email`)
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `starterPackTemplate` | dropdown | Yes | Starter pack template slug |
-| `to` | string | Yes | Recipient email address |
-| `toName` | string | No | Recipient name |
-| `fromName` | string | No | Sender display name |
-| `replyTo` | string | No | Reply-to email address |
+| `templateId` | dropdown | Yes | Excel template (dynamic dropdown) |
+| `filename` | string | No | Custom filename (without .xlsx extension) |
+| `workspaceId` | string | No | Workspace ID (optional) |
+| `variables` | text | No | JSON template variables (legacy) |
 | `var_*` | dynamic | No | Template-specific variable fields |
 
-**Available Starter Packs:**
-- `sales-proposal` - Sales Proposal Email
-- `order-confirmation` - Order Confirmation
-- `shipping-notification` - Shipping Notification
-- `invoice-email` - Invoice Email
-- `welcome-email` - Welcome Email
-- `meeting-invitation` - Meeting Invitation
-- `password-reset` - Password Reset
-- `payment-receipt` - Payment Receipt
-- `appointment-reminder` - Appointment Reminder
-- `newsletter` - Newsletter
-
-### Send Bulk Email (`send_bulk_email`)
+### Generate Batch (`generate_batch`)
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `templateId` | dropdown | Yes | Email template |
-| `recipients` | text | Yes | JSON array of recipients |
-| `batchName` | string | No | Name for the batch |
-| `sendAt` | datetime | No | Schedule send time |
+| `templateId` | dropdown | Yes | Template for batch generation |
+| `format` | dropdown | Yes | Output format (pdf or excel) |
+| `items` | text | Yes | JSON array of variable sets |
+| `batchName` | string | No | Name for the batch job |
 
 ---
 
 ## Trigger Output Fields
 
-### Email Events (sent, delivered, opened, clicked, bounced)
+### Document Completed (`document_completed`)
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `id` | string | Unique event ID |
-| `emailId` | string | Email log ID |
-| `recipient` | string | Recipient email address |
-| `subject` | string | Email subject |
-| `status` | string | Email status |
-| `timestamp` | datetime | Event timestamp |
+| `id` | string | Document job ID |
+| `status` | string | Job status (completed) |
+| `format` | string | Document format (pdf/excel) |
+| `downloadUrl` | string | Signed URL to download the document |
+| `expiresAt` | datetime | URL expiration timestamp |
 | `templateId` | string | Template ID used |
 | `templateName` | string | Template name |
+| `createdAt` | datetime | Job creation timestamp |
+| `completedAt` | datetime | Job completion timestamp |
 
-### Link Clicked (`email_clicked`)
-
-Additional fields:
-| Field | Type | Description |
-|-------|------|-------------|
-| `clickedUrl` | string | URL that was clicked |
-| `linkText` | string | Link text content |
-
-### Unsubscribe Received (`unsubscribe_received`)
+### Document Failed (`document_failed`)
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `id` | string | Unique event ID |
-| `email` | string | Unsubscribed email address |
-| `category` | string | Unsubscribe category (if any) |
-| `reason` | string | Unsubscribe reason |
-| `timestamp` | datetime | Event timestamp |
+| `id` | string | Document job ID |
+| `status` | string | Job status (failed) |
+| `format` | string | Document format (pdf/excel) |
+| `error` | string | Error message |
+| `errorCode` | string | Error code |
+| `templateId` | string | Template ID used |
+| `templateName` | string | Template name |
+| `createdAt` | datetime | Job creation timestamp |
+| `failedAt` | datetime | Job failure timestamp |
+
+### Batch Completed (`batch_completed`)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Batch job ID |
+| `status` | string | Batch status |
+| `totalDocuments` | number | Total documents in batch |
+| `successCount` | number | Successfully generated count |
+| `failureCount` | number | Failed document count |
+| `templateId` | string | Template ID used |
+| `createdAt` | datetime | Batch creation timestamp |
+| `completedAt` | datetime | Batch completion timestamp |
 
 ---
 
@@ -243,8 +208,6 @@ Expected output:
 ```
 No structural errors found during validation routine.
 This project is structurally sound!
-- 31 checks passed
-- 0 checks failed
 ```
 
 ---
@@ -263,9 +226,9 @@ In the Zapier Developer Platform:
 
 **Basic Info:**
 - **Name:** Renderbase
-- **Description:** Renderbase is a powerful email delivery platform that sends transactional emails with dynamically generated PDF and Excel attachments.
+- **Description:** Generate PDF and Excel documents from templates with a simple API. Design once, generate in multiple formats.
 - **Logo:** Upload Renderbase logo (256x256px PNG, RGBA mode, transparent background)
-- **Category:** Email
+- **Category:** Documents
 - **Role:** Built by Renderbase team
 
 **Intended Audience:**
@@ -288,7 +251,6 @@ In the Zapier Developer Platform:
 In the Renderbase admin panel or via API, create an OAuth client:
 
 ```bash
-# API call to create OAuth client
 curl -X POST https://api.renderbase.dev/api/oauth/clients \
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
@@ -298,8 +260,8 @@ curl -X POST https://api.renderbase.dev/api/oauth/clients \
       "https://zapier.com/dashboard/auth/oauth/return/App{YOUR_APP_ID}CLIAPI/"
     ],
     "scopes": [
-      "emails:send",
-      "emails:read",
+      "documents:write",
+      "documents:read",
       "templates:read",
       "webhooks:read",
       "webhooks:write",
@@ -338,55 +300,12 @@ https://api.renderbase.dev/api/oauth/token
 https://api.renderbase.dev/api/oauth/token
 ```
 
-**Scope:** `emails:send emails:read templates:read webhooks:read webhooks:write profile:read`
+**Scope:** `documents:write documents:read templates:read webhooks:read webhooks:write profile:read`
 
 **Test Trigger or API Call:**
 ```
 GET https://api.renderbase.dev/api/v1/me
 ```
-
-### 3. Configure Token Exchange
-
-In the authentication settings, configure:
-
-**Access Token Request:**
-```json
-{
-  "method": "POST",
-  "url": "https://api.renderbase.dev/api/oauth/token",
-  "body": {
-    "grant_type": "authorization_code",
-    "code": "{{bundle.inputData.code}}",
-    "client_id": "{{process.env.CLIENT_ID}}",
-    "client_secret": "{{process.env.CLIENT_SECRET}}",
-    "redirect_uri": "{{bundle.inputData.redirect_uri}}"
-  }
-}
-```
-
-**Refresh Token Request:**
-```json
-{
-  "method": "POST",
-  "url": "https://api.renderbase.dev/api/oauth/token",
-  "body": {
-    "grant_type": "refresh_token",
-    "refresh_token": "{{bundle.authData.refresh_token}}",
-    "client_id": "{{process.env.CLIENT_ID}}",
-    "client_secret": "{{process.env.CLIENT_SECRET}}"
-  }
-}
-```
-
-### 4. Update Redirect URI in Renderbase
-
-After creating the Zapier app, update the OAuth client with the actual redirect URI:
-
-```
-https://zapier.com/dashboard/auth/oauth/return/App{YOUR_APP_ID}CLIAPI/
-```
-
-Replace `{YOUR_APP_ID}` with your actual Zapier app ID.
 
 ---
 
@@ -399,7 +318,7 @@ Replace `{YOUR_APP_ID}` with your actual Zapier app ID.
 zapier test
 
 # Run specific test files
-zapier test --grep "send_email"
+zapier test --grep "generate_pdf"
 ```
 
 ### 2. Test Authentication Flow
@@ -415,20 +334,20 @@ zapier invoke auth:test
 ### 3. Test Individual Actions
 
 ```bash
-# Test sending an email
-zapier invoke creates:send_email
+# Test generating a PDF
+zapier invoke creates:generate_pdf
 
-# Test sending with PDF
-zapier invoke creates:send_email_pdf
+# Test generating Excel
+zapier invoke creates:generate_excel
 
-# Test starter pack email
-zapier invoke creates:send_starter_pack_email
+# Test batch generation
+zapier invoke creates:generate_batch
 
-# Test finding an email
-zapier invoke searches:find_email
+# Test finding a document job
+zapier invoke searches:find_document_job
 
 # Test a trigger
-zapier invoke triggers:email_sent
+zapier invoke triggers:document_completed
 ```
 
 ### 4. Test Dynamic Fields
@@ -436,42 +355,10 @@ zapier invoke triggers:email_sent
 The integration uses dynamic fields that fetch template variables. To test:
 
 1. Create a test Zap in Zapier
-2. Select the "Send Email" action
+2. Select the "Generate PDF" action
 3. Connect your Renderbase account
 4. Select a template
 5. Verify that variable fields appear based on the template schema
-
-### 5. Test with Sample Data
-
-Create `test/sample_data.json`:
-```json
-{
-  "send_email": {
-    "templateId": "etpl_test123",
-    "to": "test@example.com",
-    "toName": "Test User",
-    "subject": "Test Email from Zapier",
-    "var_customerName": "John Doe",
-    "var_orderId": "12345"
-  },
-  "send_starter_pack_email": {
-    "starterPackTemplate": "sales-proposal",
-    "to": "client@example.com",
-    "toName": "Client Name",
-    "var_customer__name": "Acme Corp",
-    "var_customer__email": "buyer@acme.com",
-    "var_deal__value": 50000
-  }
-}
-```
-
-### 6. End-to-End Testing
-
-1. Push to Zapier: `zapier push`
-2. Create a test Zap in zapier.com
-3. Connect your Renderbase account
-4. Test each trigger and action manually
-5. Verify webhook subscriptions are created/deleted properly
 
 ---
 
@@ -523,8 +410,8 @@ zapier users:list
 
 ### 1. Pre-Submission Checklist
 
-- [ ] All 6 triggers have accurate sample data
-- [ ] All 5 actions have helpful field descriptions
+- [ ] All 3 triggers have accurate sample data
+- [ ] All 3 actions have helpful field descriptions
 - [ ] Dynamic fields work correctly for all actions
 - [ ] Error messages are user-friendly
 - [ ] OAuth flow works reliably
@@ -538,21 +425,20 @@ zapier users:list
 - Square format, RGBA mode (not indexed/P mode)
 - Renderbase brand logo
 
-**Category:** Email
+**Category:** Documents
 
 **Description (short):**
-> Renderbase is a powerful email delivery platform that sends transactional emails with dynamically generated PDF and Excel attachments.
+> Renderbase is a document generation platform that creates PDF and Excel files from templates using a simple API.
 
 **Description (long):**
-> Renderbase is a powerful email delivery platform that helps businesses send transactional emails with automatically generated attachments. Design once, generate PDFs and Excel files from the same template.
+> Renderbase is a powerful document generation platform for developers. Design templates once and generate pixel-perfect PDFs and Excel files from JSON data.
 >
 > **Key Features:**
-> - Send personalized transactional emails with dynamic variable fields
-> - Automatically generate PDF attachments (invoices, receipts, reports)
-> - Automatically generate Excel attachments (data exports, spreadsheets)
-> - Track email opens, clicks, and bounces
-> - Trigger Zaps when emails are sent, delivered, opened, or clicked
-> - Use pre-built Starter Pack templates for common use cases
+> - Generate PDF documents from customizable templates
+> - Generate Excel spreadsheets with formatting preserved
+> - Batch generate multiple documents in parallel
+> - Trigger Zaps when documents are generated or fail
+> - Dynamic template variables with type validation
 
 ### 3. Submit for Review
 
@@ -562,15 +448,6 @@ zapier users:list
 4. Submit for Zapier team review
 
 **Review Timeline:** 2-4 weeks typically
-
-### 4. Respond to Review Feedback
-
-Zapier may request changes. Common feedback includes:
-- Improving field help text
-- Adding better sample data
-- Clarifying error messages
-- Adjusting trigger/action names
-- Fixing label capitalization (e.g., "Send Email With Generated PDF")
 
 ---
 
@@ -586,7 +463,7 @@ zapier versions
 zapier migrate 1.0.0 1.1.0
 
 # Deprecate old version
-zapier deprecate 1.0.0 2025-06-01
+zapier deprecate 1.0.0 2026-06-01
 ```
 
 ### Monitoring
@@ -594,34 +471,6 @@ zapier deprecate 1.0.0 2025-06-01
 1. **Zapier Dashboard:** Monitor usage and errors
 2. **Renderbase Analytics:** Track API usage from Zapier
 3. **Error Alerts:** Set up notifications for high error rates
-
-### Common Updates
-
-**Adding a new trigger:**
-1. Create the trigger file in `src/triggers/`
-2. Add to `index.js`
-3. Test locally
-4. Push and promote
-
-**Adding a new action:**
-1. Create the action file in `src/creates/`
-2. Add dynamic field support if needed
-3. Add to `index.js`
-4. Test locally
-5. Push and promote
-
-**Updating OAuth scopes:**
-1. Update Renderbase OAuth client
-2. Update `src/authentication.js`
-3. Users may need to re-authenticate
-
-### Breaking Changes
-
-For breaking changes:
-1. Create a new major version
-2. Provide migration path
-3. Give users notice period (30+ days)
-4. Deprecate old version
 
 ---
 
@@ -648,22 +497,6 @@ For breaking changes:
 - Check template_list searches are working
 - Verify user has templates:read scope
 - Check API pagination handling
-
-**Starter Pack Action Errors:**
-- Verify user has imported the starter pack
-- Check template slug matches exactly
-- Confirm template exists in user's account
-
-### Validation Warnings
-
-The following warnings are expected and don't block deployment:
-
-| Warning | Reason | Resolution |
-|---------|--------|------------|
-| "needs a successful task but doesn't have a Zap" | No live Zaps yet | Create test Zaps before publishing |
-| "requires at least one connected account" | No OAuth connections | Connect account in testing |
-| "must have at least 3 users with live Zaps" | Publishing requirement | Invite beta testers |
-| "needs a titlecased label" | Style recommendation | Update labels (e.g., "Send Email With Generated PDF") |
 
 ### Getting Help
 
@@ -697,8 +530,8 @@ zapier env:set         # Set environment variables
 
 - Developer Platform: https://developer.zapier.com
 - CLI Documentation: https://platform.zapier.com/cli
-- Renderbase API Docs: https://docs.renderbase.dev/api
-- Renderbase OAuth Docs: https://docs.renderbase.dev/oauth
+- Renderbase API Docs: https://docs.renderbase.dev/api-reference
+- Renderbase OAuth Docs: https://docs.renderbase.dev/developer-guide/oauth
 
 ### API Endpoints Used
 
@@ -707,10 +540,10 @@ zapier env:set         # Set environment variables
 | `/api/oauth/authorize` | GET | OAuth authorization |
 | `/api/oauth/token` | POST | Token exchange/refresh |
 | `/api/v1/me` | GET | Auth test/user info |
-| `/api/v1/emails/send` | POST | Send single email |
-| `/api/v1/emails/send-bulk` | POST | Send bulk emails |
-| `/api/v1/emails` | GET | List/search emails |
-| `/api/v1/emails/:id` | GET | Get email details |
+| `/api/v1/documents/generate` | POST | Generate single document |
+| `/api/v1/documents/generate/batch` | POST | Generate batch documents |
+| `/api/v1/documents/jobs` | GET | List/search document jobs |
+| `/api/v1/documents/jobs/:id` | GET | Get document job details |
 | `/api/v1/templates` | GET | List templates |
 | `/api/v1/templates/:id/zapier-fields` | GET | Get template Zapier fields |
 | `/api/v1/webhook-subscriptions` | POST | Create webhook |
@@ -719,39 +552,30 @@ zapier env:set         # Set environment variables
 ### File Structure
 
 ```
-integrations/zapier-renderbase/
+zapier-renderbase/
 ├── index.js                    # Main entry point
 ├── package.json                # Dependencies and version
 ├── DEPLOYMENT.md               # This file
 ├── README.md                   # General documentation
-├── .zapierapprc                # Zapier app config
-├── build/                      # Built packages
-│   ├── build.zip               # Deployment package
-│   └── source.zip              # Source package
 └── src/
     ├── authentication.js       # OAuth configuration
     ├── triggers/               # Trigger definitions
-    │   ├── email_sent.js
-    │   ├── email_delivered.js
-    │   ├── email_opened.js
-    │   ├── email_clicked.js
-    │   ├── email_bounced.js
-    │   └── unsubscribe_received.js
+    │   ├── document_completed.js
+    │   ├── document_failed.js
+    │   └── batch_completed.js
     ├── creates/                # Action definitions
-    │   ├── send_email.js
-    │   ├── send_email_pdf.js
-    │   ├── send_email_excel.js
-    │   ├── send_bulk_email.js
-    │   └── send_starter_pack_email.js
+    │   ├── generate_pdf.js
+    │   ├── generate_excel.js
+    │   └── generate_batch.js
     ├── searches/               # Search definitions
-    │   ├── find_email.js
+    │   ├── find_document_job.js
     │   ├── template_list.js
     │   ├── template_list_pdf.js
     │   ├── template_list_excel.js
     │   └── template_variables.js
     └── lib/                    # Shared utilities
         ├── config.js           # API configuration
-        ├── action_helpers.js   # Action utilities & field definitions
+        ├── action_helpers.js   # Action utilities
         ├── dynamic_fields.js   # Dynamic field handling
         └── webhook_helpers.js  # Webhook utilities
 ```
