@@ -11,13 +11,11 @@ const authentication = require('./src/authentication');
 // Triggers
 const documentCompleted = require('./src/triggers/document_completed');
 const documentFailed = require('./src/triggers/document_failed');
-const batchCompleted = require('./src/triggers/batch_completed');
 
 // Actions (Creates)
 const generateDocument = require('./src/creates/generate_document');
 const generatePdf = require('./src/creates/generate_pdf');
 const generateExcel = require('./src/creates/generate_excel');
-const generateBatch = require('./src/creates/generate_batch');
 
 // Searches
 const findDocumentJob = require('./src/searches/find_document_job');
@@ -79,7 +77,6 @@ module.exports = {
   triggers: {
     [documentCompleted.key]: documentCompleted,
     [documentFailed.key]: documentFailed,
-    [batchCompleted.key]: batchCompleted,
     // Hidden triggers for dynamic dropdowns (cascading: team -> workspace -> template)
     [teamList.key]: teamList,
     [workspaceList.key]: workspaceList,
@@ -93,7 +90,6 @@ module.exports = {
     [generateDocument.key]: generateDocument,
     [generatePdf.key]: generatePdf,
     [generateExcel.key]: generateExcel,
-    [generateBatch.key]: generateBatch,
   },
 
   // Searches - Find existing records
