@@ -34,6 +34,7 @@ This guide covers the complete process for deploying the Renderbase Zapier integ
 The Renderbase backend must have the following ready:
 
 - OAuth 2.0 module deployed (`/api/oauth/*` endpoints)
+- **Integration API module deployed** (`/api/v1/integration-api/*` endpoints) - Required for team/workspace/template cascading selection
 - Webhook subscriptions module deployed (`/api/v1/webhook-subscriptions/*`)
 - Template Zapier fields endpoint (`/api/templates/:identifier/zapier-fields`)
 - API rate limiting configured for OAuth clients
@@ -67,12 +68,16 @@ The Renderbase backend must have the following ready:
 
 ### Hidden Triggers (for Dynamic Dropdowns)
 
-| Key | Purpose |
-|-----|---------|
-| `template_list` | Populate template dropdown |
-| `template_list_pdf` | Populate PDF template dropdown |
-| `template_list_excel` | Populate Excel template dropdown |
-| `template_variables` | Get template variables for dynamic fields |
+| Key | Purpose | Depends On |
+|-----|---------|------------|
+| `team_list` | Populate team dropdown | - |
+| `workspace_list` | Populate workspace dropdown | `teamId` |
+| `template_list` | Populate template dropdown | `teamId`, `workspaceId` |
+| `template_list_pdf` | Populate PDF template dropdown | `teamId`, `workspaceId` |
+| `template_list_excel` | Populate Excel template dropdown | `teamId`, `workspaceId` |
+| `template_variables` | Get template variables for dynamic fields | `templateId` |
+
+**Cascading Selection:** Users select Team → Workspace → Template in order. Each dropdown filters based on the previous selection using the Integration API.
 
 ---
 
@@ -82,11 +87,17 @@ The Renderbase backend must have the following ready:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `templateId` | dropdown | Yes | PDF template (dynamic dropdown) |
+| `teamId` | dropdown | Yes | Team selection (cascading) |
+| `workspaceId` | dropdown | Yes | Workspace within selected team (cascading) |
+| `templateId` | dropdown | Yes | PDF template within selected workspace (cascading) |
 | `filename` | string | No | Custom filename (without .pdf extension) |
-| `workspaceId` | string | No | Workspace ID (optional) |
 | `variables` | text | No | JSON template variables (legacy) |
 | `var_*` | dynamic | No | Template-specific variable fields |
+
+**Cascading Selection:** The Team → Workspace → Template dropdowns use cascading selection. Each dropdown filters based on the previous selection:
+1. Select a **Team** - lists all teams the user has access to
+2. Select a **Workspace** - lists workspaces within the selected team
+3. Select a **Template** - lists PDF templates within the selected workspace
 
 **Dynamic Fields:** When a template is selected, the integration fetches the template's variable schema and generates individual input fields for each variable. Object variables are flattened using `__` notation (e.g., `customer__name`), and array variables become line items.
 
@@ -94,9 +105,10 @@ The Renderbase backend must have the following ready:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `templateId` | dropdown | Yes | Excel template (dynamic dropdown) |
+| `teamId` | dropdown | Yes | Team selection (cascading) |
+| `workspaceId` | dropdown | Yes | Workspace within selected team (cascading) |
+| `templateId` | dropdown | Yes | Excel template within selected workspace (cascading) |
 | `filename` | string | No | Custom filename (without .xlsx extension) |
-| `workspaceId` | string | No | Workspace ID (optional) |
 | `variables` | text | No | JSON template variables (legacy) |
 | `var_*` | dynamic | No | Template-specific variable fields |
 
@@ -104,7 +116,9 @@ The Renderbase backend must have the following ready:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `templateId` | dropdown | Yes | Template for batch generation |
+| `teamId` | dropdown | Yes | Team selection (cascading) |
+| `workspaceId` | dropdown | Yes | Workspace within selected team (cascading) |
+| `templateId` | dropdown | Yes | Template within selected workspace (cascading) |
 | `format` | dropdown | Yes | Output format (pdf or excel) |
 | `items` | text | Yes | JSON array of variable sets |
 | `batchName` | string | No | Name for the batch job |
@@ -501,6 +515,21 @@ zapier deprecate 1.0.0 2026-06-01
 - Verify user has templates:read scope
 - Check API pagination handling
 
+**Cascading Dropdowns Not Working:**
+- Verify Integration API module is deployed on backend
+- Check `/api/v1/integration-api/teams` returns data
+- Ensure OAuth token has correct scopes
+- Verify `altersDynamicFields: true` is set on team/workspace fields
+- Check browser console for API errors during dropdown load
+
+**Workspace Dropdown Shows All Workspaces:**
+- Verify `teamId` is being passed to workspace_list search
+- Check that `inputFields` ordering has teamId before workspaceId
+
+**Template Dropdown Shows Wrong Templates:**
+- Verify `workspaceId` is being passed to template_list search
+- Check template type filter (pdf/excel) is being applied correctly
+
 ### Getting Help
 
 - **Zapier Documentation:** https://docs.zapier.com/platform
@@ -552,11 +581,14 @@ zapier describe        # Show triggers, searches, creates
 | `/api/oauth/authorize` | GET | OAuth authorization |
 | `/api/oauth/token` | POST | Token exchange/refresh |
 | `/api/v1/me` | GET | Auth test/user info |
+| `/api/v1/integration-api/teams` | GET | List teams for cascading selection |
+| `/api/v1/integration-api/workspaces` | GET | List workspaces (filtered by teamId) |
+| `/api/v1/integration-api/templates` | GET | List templates (filtered by workspaceId, type) |
 | `/api/v1/documents/generate` | POST | Generate single document |
 | `/api/v1/documents/generate/batch` | POST | Generate batch documents |
 | `/api/v1/documents/jobs` | GET | List/search document jobs |
 | `/api/v1/documents/jobs/:id` | GET | Get document job details |
-| `/api/v1/templates` | GET | List templates |
+| `/api/v1/templates` | GET | List templates (legacy) |
 | `/api/v1/templates/:id/zapier-fields` | GET | Get template Zapier fields |
 | `/api/v1/webhook-subscriptions` | POST | Create webhook |
 | `/api/v1/webhook-subscriptions/:id` | DELETE | Delete webhook |
@@ -581,7 +613,9 @@ zapier-renderbase/
     │   └── generate_batch.js
     ├── searches/               # Search definitions
     │   ├── find_document_job.js
-    │   ├── template_list.js
+    │   ├── team_list.js        # Team dropdown (cascading)
+    │   ├── workspace_list.js   # Workspace dropdown (cascading, depends on teamId)
+    │   ├── template_list.js    # Template dropdown (cascading, depends on workspaceId)
     │   ├── template_list_pdf.js
     │   ├── template_list_excel.js
     │   └── template_variables.js
