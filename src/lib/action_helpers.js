@@ -43,7 +43,7 @@ const teamField = {
   required: true,
   dynamic: 'team_list.id.name',
   altersDynamicFields: true,
-  helpText: 'Select a team from your Renderbase account.',
+  helpText: 'Select a team from your Rynko account.',
 };
 
 /**

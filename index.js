@@ -1,7 +1,7 @@
 /**
- * Renderbase Zapier Integration
+ * Rynko Zapier Integration
  *
- * This integration enables Renderbase users to:
+ * This integration enables Rynko users to:
  * - Generate PDF and Excel documents from templates
  * - Receive webhook notifications for document events
  */
@@ -43,7 +43,7 @@ module.exports = {
       }
       // Add standard headers
       request.headers['Content-Type'] = 'application/json';
-      request.headers['User-Agent'] = 'Renderbase-Zapier/1.0';
+      request.headers['User-Agent'] = 'Rynko-Zapier/1.0';
       return request;
     },
   ],

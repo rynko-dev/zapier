@@ -1,6 +1,6 @@
-# Renderbase Zapier Integration - Deployment Guide
+# Rynko Zapier Integration - Deployment Guide
 
-This guide covers the complete process for deploying the Renderbase Zapier integration, from initial setup through production deployment.
+This guide covers the complete process for deploying the Rynko Zapier integration, from initial setup through production deployment.
 
 **Last Updated:** January 2026
 
@@ -27,11 +27,11 @@ This guide covers the complete process for deploying the Renderbase Zapier integ
 - npm 8.x or higher
 - Zapier CLI (`npm install -g zapier-platform-cli`)
 - A Zapier account (free tier works for development)
-- Access to Renderbase backend with OAuth module deployed
+- Access to Rynko backend with OAuth module deployed
 
 ### Backend Requirements
 
-The Renderbase backend must have the following ready:
+The Rynko backend must have the following ready:
 
 - OAuth 2.0 module deployed (`/api/oauth/*` endpoints)
 - **Integration API module deployed** (`/api/v1/integration-api/*` endpoints) - Required for team/workspace/template cascading selection
@@ -175,7 +175,7 @@ The Renderbase backend must have the following ready:
 ### 1. Install Dependencies
 
 ```bash
-cd integrations/zapier-renderbase
+cd integrations/zapier-rynko
 npm install
 ```
 
@@ -191,7 +191,7 @@ This will open a browser window for authentication.
 
 For a new app:
 ```bash
-zapier register "Renderbase"
+zapier register "Rynko"
 ```
 
 To link to an existing app:
@@ -205,9 +205,9 @@ Create a `.env` file for local development:
 
 ```bash
 # Local development settings
-RENDERBASE_API_URL=https://api.renderbase.dev
-RENDERBASE_OAUTH_CLIENT_ID=your_zapier_client_id
-RENDERBASE_OAUTH_CLIENT_SECRET=your_zapier_client_secret
+RYNKO_API_URL=https://api.rynko.dev
+RYNKO_OAUTH_CLIENT_ID=your_zapier_client_id
+RYNKO_OAUTH_CLIENT_SECRET=your_zapier_client_secret
 ```
 
 Update `src/lib/config.js` if needed for local testing.
@@ -239,11 +239,11 @@ This project is structurally sound!
 In the Zapier Developer Platform:
 
 **Basic Info:**
-- **Name:** Renderbase
+- **Name:** Rynko
 - **Description:** Generate PDF and Excel documents from templates with a simple API. Design once, generate in multiple formats.
-- **Logo:** Upload Renderbase logo (256x256px PNG, RGBA mode, transparent background)
+- **Logo:** Upload Rynko logo (256x256px PNG, RGBA mode, transparent background)
 - **Category:** Documents
-- **Role:** Built by Renderbase team
+- **Role:** Built by Rynko team
 
 **Intended Audience:**
 - For initial development, select "Private"
@@ -251,21 +251,21 @@ In the Zapier Developer Platform:
 
 ### 3. Configure Branding
 
-- **Primary Color:** #8B5CF6 (Renderbase violet)
-- **Homepage URL:** https://renderbase.dev
-- **Support URL:** https://renderbase.dev/support
-- **Documentation URL:** https://docs.renderbase.dev/integrations/zapier
+- **Primary Color:** #8B5CF6 (Rynko violet)
+- **Homepage URL:** https://rynko.dev
+- **Support URL:** https://rynko.dev/support
+- **Documentation URL:** https://docs.rynko.dev/integrations/zapier
 
 ---
 
 ## OAuth 2.0 Configuration
 
-### 1. Register OAuth Client in Renderbase
+### 1. Register OAuth Client in Rynko
 
-In the Renderbase admin panel or via API, create an OAuth client:
+In the Rynko admin panel or via API, create an OAuth client:
 
 ```bash
-curl -X POST https://api.renderbase.dev/api/oauth/clients \
+curl -X POST https://api.rynko.dev/api/oauth/clients \
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -295,30 +295,30 @@ curl -X POST https://api.renderbase.dev/api/oauth/clients \
 3. Select **OAuth 2.0**
 4. Configure the following:
 
-**Client ID:** `your_client_id_from_renderbase`
+**Client ID:** `your_client_id_from_rynko`
 
-**Client Secret:** `your_client_secret_from_renderbase`
+**Client Secret:** `your_client_secret_from_rynko`
 
 **Authorization URL:**
 ```
-https://app.renderbase.dev/oauth/authorize
+https://app.rynko.dev/oauth/authorize
 ```
 
 **Access Token Request URL:**
 ```
-https://api.renderbase.dev/api/oauth/token
+https://api.rynko.dev/api/oauth/token
 ```
 
 **Refresh Token Request URL:**
 ```
-https://api.renderbase.dev/api/oauth/token
+https://api.rynko.dev/api/oauth/token
 ```
 
 **Scope:** `documents:write documents:read templates:read webhooks:read webhooks:write profile:read`
 
 **Test Trigger or API Call:**
 ```
-GET https://api.renderbase.dev/api/v1/me
+GET https://api.rynko.dev/api/v1/me
 ```
 
 ---
@@ -373,7 +373,7 @@ The integration uses dynamic fields that fetch template variables. To test:
 
 1. Create a test Zap in Zapier
 2. Select the "Generate PDF" action
-3. Connect your Renderbase account
+3. Connect your Rynko account
 4. Select a template
 5. Verify that variable fields appear based on the template schema
 
@@ -440,15 +440,15 @@ zapier users:list
 **App Logo:**
 - 256x256 PNG with transparent background
 - Square format, RGBA mode (not indexed/P mode)
-- Renderbase brand logo
+- Rynko brand logo
 
 **Category:** Documents
 
 **Description (short):**
-> Renderbase is a document generation platform that creates PDF and Excel files from templates using a simple API.
+> Rynko is a document generation platform that creates PDF and Excel files from templates using a simple API.
 
 **Description (long):**
-> Renderbase is a powerful document generation platform for developers. Design templates once and generate pixel-perfect PDFs and Excel files from JSON data.
+> Rynko is a powerful document generation platform for developers. Design templates once and generate pixel-perfect PDFs and Excel files from JSON data.
 >
 > **Key Features:**
 > - Generate PDF documents from customizable templates
@@ -486,7 +486,7 @@ zapier deprecate 1.0.0 2026-06-01
 ### Monitoring
 
 1. **Zapier Dashboard:** Monitor usage and errors
-2. **Renderbase Analytics:** Track API usage from Zapier
+2. **Rynko Analytics:** Track API usage from Zapier
 3. **Error Alerts:** Set up notifications for high error rates
 
 ---
@@ -502,7 +502,7 @@ zapier deprecate 1.0.0 2026-06-01
 
 **Webhook Subscriptions Not Working:**
 - Verify webhook URL is accessible
-- Check Renderbase webhook module is deployed
+- Check Rynko webhook module is deployed
 - Confirm user has webhooks:write scope
 
 **Dynamic Fields Not Loading:**
@@ -535,8 +535,8 @@ zapier deprecate 1.0.0 2026-06-01
 - **Zapier Documentation:** https://docs.zapier.com/platform
 - **Zapier CLI Reference:** https://docs.zapier.com/platform/reference/cli
 - **Zapier GitHub:** https://github.com/zapier/zapier-platform
-- **Renderbase Support:** support@renderbase.dev
-- **Renderbase Docs:** https://docs.renderbase.dev/integrations/zapier
+- **Rynko Support:** support@rynko.dev
+- **Rynko Docs:** https://docs.rynko.dev/integrations/zapier
 
 ---
 
@@ -571,8 +571,8 @@ zapier describe        # Show triggers, searches, creates
 - Developer Platform: https://zapier.com/developer-platform
 - CLI Documentation: https://docs.zapier.com/platform/reference/cli
 - CLI GitHub Repository: https://github.com/zapier/zapier-platform
-- Renderbase API Docs: https://docs.renderbase.dev/api-reference
-- Renderbase OAuth Docs: https://docs.renderbase.dev/developer-guide/oauth
+- Rynko API Docs: https://docs.rynko.dev/api-reference
+- Rynko OAuth Docs: https://docs.rynko.dev/developer-guide/oauth
 
 ### API Endpoints Used
 
@@ -596,7 +596,7 @@ zapier describe        # Show triggers, searches, creates
 ### File Structure
 
 ```
-zapier-renderbase/
+zapier-rynko/
 ├── index.js                    # Main entry point
 ├── package.json                # Dependencies and version
 ├── DEPLOYMENT.md               # This file

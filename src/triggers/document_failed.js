@@ -1,7 +1,7 @@
 /**
  * Document Failed Trigger
  *
- * Fires when a document generation fails through Renderbase.
+ * Fires when a document generation fails through Rynko.
  */
 
 const { WEBHOOK_EVENTS } = require('../lib/config');
@@ -21,7 +21,7 @@ module.exports = {
 
   display: {
     label: 'Document Failed',
-    description: 'Triggers when a document generation fails through Renderbase.',
+    description: 'Triggers when a document generation fails through Rynko.',
   },
 
   operation: {

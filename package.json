@@ -1,7 +1,7 @@
 {
-  "name": "zapier-renderbase",
+  "name": "zapier-rynko",
   "version": "1.0.0",
-  "description": "Renderbase integration for Zapier - Generate PDF and Excel documents from templates",
+  "description": "Rynko integration for Zapier - Generate PDF and Excel documents from templates",
   "main": "index.js",
   "scripts": {
     "test": "jest --testTimeout 10000",
@@ -24,14 +24,14 @@
   },
   "keywords": [
     "zapier",
-    "renderbase",
+    "rynko",
     "pdf",
     "excel",
     "document-generation",
     "template",
     "automation"
   ],
-  "author": "Renderbase",
+  "author": "Rynko",
   "license": "MIT",
   "private": true
 }

@@ -1,6 +1,6 @@
-# Renderbase Zapier Integration
+# Rynko Zapier Integration
 
-Official Zapier integration for Renderbase - the document generation platform with unified template design for PDF and Excel documents.
+Official Zapier integration for Rynko - the document generation platform with unified template design for PDF and Excel documents.
 
 ## Features
 
@@ -21,7 +21,7 @@ Official Zapier integration for Renderbase - the document generation platform wi
 ## Project Structure
 
 ```
-zapier-renderbase/
+zapier-rynko/
 ├── index.js                    # Main app definition
 ├── package.json                # Dependencies
 ├── DEPLOYMENT.md               # Deployment guide
@@ -129,10 +129,10 @@ When generating documents, you can optionally specify a `workspaceId` to generat
 ## Documentation
 
 - [Deployment Guide](./DEPLOYMENT.md)
-- [Renderbase API Documentation](https://docs.renderbase.dev/api)
+- [Rynko API Documentation](https://docs.rynko.dev/api)
 - [Zapier CLI Reference](https://platform.zapier.com/cli)
 
 ## Support
 
-- Email: support@renderbase.dev
-- Documentation: https://docs.renderbase.dev
+- Email: support@rynko.dev
+- Documentation: https://docs.rynko.dev

@@ -2,7 +2,7 @@
  * Dynamic Fields Helper
  *
  * Utilities for fetching and processing dynamic input fields
- * based on template variables from the Renderbase API.
+ * based on template variables from the Rynko API.
  */
 
 const { API_BASE_URL } = require('./config');

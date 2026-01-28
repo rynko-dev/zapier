@@ -8,7 +8,7 @@ const { WEBHOOKS_ENDPOINT, API_BASE_URL } = require('./config');
 
 /**
  * Subscribe to a webhook event
- * Creates a webhook subscription in Renderbase
+ * Creates a webhook subscription in Rynko
  */
 const subscribeHook = async (z, bundle, eventType) => {
   const response = await z.request({
@@ -50,7 +50,7 @@ const unsubscribeHook = async (z, bundle) => {
 
 /**
  * Parse incoming webhook payload
- * Called when Renderbase sends a webhook to Zapier
+ * Called when Rynko sends a webhook to Zapier
  */
 const performHook = (z, bundle) => {
   // The webhook payload is available in bundle.cleanedRequest
@@ -117,7 +117,7 @@ const createSampleData = {
       templateName: 'Invoice Template',
       format: 'pdf',
       status: 'completed',
-      downloadUrl: 'https://api.renderbase.dev/v1/documents/job_sample_123/download',
+      downloadUrl: 'https://api.rynko.dev/v1/documents/job_sample_123/download',
       fileSize: 125000,
       completedAt: new Date().toISOString(),
     },
@@ -151,7 +151,7 @@ const createSampleData = {
       failureCount: 1,
       format: 'pdf',
       status: 'completed',
-      downloadUrl: 'https://api.renderbase.dev/v1/batches/batch_sample_123/download',
+      downloadUrl: 'https://api.rynko.dev/v1/batches/batch_sample_123/download',
       completedAt: new Date().toISOString(),
     },
   }),

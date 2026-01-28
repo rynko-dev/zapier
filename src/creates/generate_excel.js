@@ -51,7 +51,7 @@ module.exports = {
       templateName: 'Sales Report Template',
       format: 'excel',
       fileName: 'Sales-Report-2025.xlsx',
-      downloadUrl: 'https://api.renderbase.dev/v1/documents/job_abc123/download',
+      downloadUrl: 'https://api.rynko.dev/v1/documents/job_abc123/download',
       fileSize: 89000,
       createdAt: '2025-01-15T10:30:00Z',
       completedAt: '2025-01-15T10:30:05Z',

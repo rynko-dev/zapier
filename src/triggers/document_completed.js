@@ -1,7 +1,7 @@
 /**
  * Document Completed Trigger
  *
- * Fires when a document is successfully generated through Renderbase.
+ * Fires when a document is successfully generated through Rynko.
  */
 
 const { WEBHOOK_EVENTS } = require('../lib/config');
@@ -21,7 +21,7 @@ module.exports = {
 
   display: {
     label: 'Document Completed',
-    description: 'Triggers when a document is successfully generated through Renderbase.',
+    description: 'Triggers when a document is successfully generated through Rynko.',
   },
 
   operation: {
@@ -51,7 +51,7 @@ module.exports = {
         templateName: 'Invoice Template',
         format: 'pdf',
         status: 'completed',
-        downloadUrl: 'https://api.renderbase.dev/v1/documents/job_abc123/download',
+        downloadUrl: 'https://api.rynko.dev/v1/documents/job_abc123/download',
         fileSize: 125000,
         completedAt: '2025-01-15T10:30:00Z',
       },

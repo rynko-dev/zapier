@@ -1,8 +1,8 @@
 /**
  * OAuth 2.0 Authentication Configuration
  *
- * Renderbase uses OAuth 2.0 with PKCE for secure third-party access.
- * This configuration enables users to connect their Renderbase account to Zapier.
+ * Rynko uses OAuth 2.0 with PKCE for secure third-party access.
+ * This configuration enables users to connect their Rynko account to Zapier.
  */
 
 const { API_BASE_URL, WEBAPP_URL } = require('./lib/config');
@@ -73,19 +73,19 @@ const refreshAccessToken = async (z, bundle) => {
   });
 
   if (response.status !== 200) {
-    throw new z.errors.RefreshAuthError('Session expired. Please reconnect your Renderbase account.');
+    throw new z.errors.RefreshAuthError('Session expired. Please reconnect your Rynko account.');
   }
 
   // Check for OAuth error response
   if (response.data.error) {
     throw new z.errors.RefreshAuthError(
-      response.data.error_description || 'Session expired. Please reconnect your Renderbase account.'
+      response.data.error_description || 'Session expired. Please reconnect your Rynko account.'
     );
   }
 
   // Ensure access_token exists
   if (!response.data.access_token) {
-    throw new z.errors.RefreshAuthError('Invalid token response. Please reconnect your Renderbase account.');
+    throw new z.errors.RefreshAuthError('Invalid token response. Please reconnect your Rynko account.');
   }
 
   return {

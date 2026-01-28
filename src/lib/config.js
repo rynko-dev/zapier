@@ -1,14 +1,14 @@
 /**
  * Configuration Constants
  *
- * Central configuration for the Renderbase Zapier integration.
+ * Central configuration for the Rynko Zapier integration.
  */
 
 // API Base URL - Set via environment variable in Zapier
-const API_BASE_URL = process.env.API_BASE_URL || 'https://api.renderbase.dev/api';
+const API_BASE_URL = process.env.API_BASE_URL || 'https://api.rynko.dev/api';
 
 // Webapp URL - For OAuth authorization (user login & consent)
-const WEBAPP_URL = process.env.WEBAPP_URL || 'https://app.renderbase.dev';
+const WEBAPP_URL = process.env.WEBAPP_URL || 'https://app.rynko.dev';
 
 // API Version
 const API_VERSION = 'v1';
