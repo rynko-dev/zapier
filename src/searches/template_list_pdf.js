@@ -59,17 +59,17 @@ module.exports = {
     inputFields: [
       {
         key: 'workspaceId',
-        label: 'Workspace',
+        label: 'Environment',
         type: 'string',
         required: false,
-        helpText: 'Filter templates by workspace.',
+        helpText: 'Filter templates by environment.',
       },
       {
         key: 'teamId',
-        label: 'Team',
+        label: 'Project',
         type: 'string',
         required: false,
-        helpText: 'Filter templates by team (used if workspace is not specified).',
+        helpText: 'Filter templates by project (used if environment is not specified).',
       },
     ],
 
@@ -85,9 +85,9 @@ module.exports = {
     outputFields: [
       { key: 'id', label: 'Template ID', type: 'string' },
       { key: 'name', label: 'Template Name', type: 'string' },
-      { key: 'workspaceId', label: 'Workspace ID', type: 'string' },
-      { key: 'workspaceName', label: 'Workspace Name', type: 'string' },
-      { key: 'teamId', label: 'Team ID', type: 'string' },
+      { key: 'workspaceId', label: 'Environment ID', type: 'string' },
+      { key: 'workspaceName', label: 'Environment Name', type: 'string' },
+      { key: 'teamId', label: 'Project ID', type: 'string' },
       { key: 'description', label: 'Description', type: 'string' },
     ],
   },

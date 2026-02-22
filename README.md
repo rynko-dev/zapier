@@ -122,9 +122,9 @@ This integration uses OAuth 2.0 with the following scopes:
 | `document.failed` | Document generation failed with error details |
 | `batch.completed` | Batch generation completed |
 
-## Workspace Support
+## Environment Support
 
-When generating documents, you can optionally specify a `workspaceId` to generate documents in a specific workspace. If not provided, documents are generated in the user's current workspace.
+When generating documents, you can optionally specify a `workspaceId` to generate documents in a specific environment. If not provided, documents are generated in the user's current environment.
 
 ## Documentation
 

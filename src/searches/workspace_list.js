@@ -1,9 +1,9 @@
 /**
- * Workspace List Search (Hidden)
+ * Environment List Search (Hidden)
  *
  * This is a hidden search used to power dynamic dropdowns in actions.
- * Users don't interact with this directly - it provides workspace options
- * filtered by the selected team.
+ * Users don't interact with this directly - it provides environment options
+ * filtered by the selected project.
  */
 
 const { INTEGRATION_API_ENDPOINT } = require('../lib/config');
@@ -35,11 +35,11 @@ const perform = async (z, bundle) => {
 
 module.exports = {
   key: 'workspace_list',
-  noun: 'Workspace',
+  noun: 'Environment',
 
   display: {
-    label: 'Workspace List',
-    description: 'Get a list of workspaces (used for dynamic dropdowns).',
+    label: 'Environment List',
+    description: 'Get a list of environments (used for dynamic dropdowns).',
     hidden: true, // Hidden from users - only for dropdown population
   },
 
@@ -49,10 +49,10 @@ module.exports = {
     inputFields: [
       {
         key: 'teamId',
-        label: 'Team',
+        label: 'Project',
         type: 'string',
         required: false,
-        helpText: 'Filter workspaces by team.',
+        helpText: 'Filter environments by project.',
       },
     ],
 
@@ -61,14 +61,14 @@ module.exports = {
       name: 'Marketing (My Company)',
       teamId: 'team_abc123',
       teamName: 'My Company',
-      description: 'Marketing workspace',
+      description: 'Marketing environment',
     },
 
     outputFields: [
-      { key: 'id', label: 'Workspace ID', type: 'string' },
-      { key: 'name', label: 'Workspace Name', type: 'string' },
-      { key: 'teamId', label: 'Team ID', type: 'string' },
-      { key: 'teamName', label: 'Team Name', type: 'string' },
+      { key: 'id', label: 'Environment ID', type: 'string' },
+      { key: 'name', label: 'Environment Name', type: 'string' },
+      { key: 'teamId', label: 'Project ID', type: 'string' },
+      { key: 'teamName', label: 'Project Name', type: 'string' },
       { key: 'description', label: 'Description', type: 'string' },
     ],
   },

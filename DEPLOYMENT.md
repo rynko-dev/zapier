@@ -34,7 +34,7 @@ This guide covers the complete process for deploying the Rynko Zapier integratio
 The Rynko backend must have the following ready:
 
 - OAuth 2.0 module deployed (`/api/oauth/*` endpoints)
-- **Integration API module deployed** (`/api/v1/integration-api/*` endpoints) - Required for team/workspace/template cascading selection
+- **Integration API module deployed** (`/api/v1/integration-api/*` endpoints) - Required for project/environment/template cascading selection
 - Webhook subscriptions module deployed (`/api/v1/webhook-subscriptions/*`)
 - Template Zapier fields endpoint (`/api/templates/:identifier/zapier-fields`)
 - API rate limiting configured for OAuth clients
@@ -70,14 +70,14 @@ The Rynko backend must have the following ready:
 
 | Key | Purpose | Depends On |
 |-----|---------|------------|
-| `team_list` | Populate team dropdown | - |
-| `workspace_list` | Populate workspace dropdown | `teamId` |
+| `team_list` | Populate project dropdown | - |
+| `workspace_list` | Populate environment dropdown | `teamId` |
 | `template_list` | Populate template dropdown | `teamId`, `workspaceId` |
 | `template_list_pdf` | Populate PDF template dropdown | `teamId`, `workspaceId` |
 | `template_list_excel` | Populate Excel template dropdown | `teamId`, `workspaceId` |
 | `template_variables` | Get template variables for dynamic fields | `templateId` |
 
-**Cascading Selection:** Users select Team → Workspace → Template in order. Each dropdown filters based on the previous selection using the Integration API.
+**Cascading Selection:** Users select Project → Environment → Template in order. Each dropdown filters based on the previous selection using the Integration API.
 
 ---
 
@@ -87,17 +87,17 @@ The Rynko backend must have the following ready:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `teamId` | dropdown | Yes | Team selection (cascading) |
-| `workspaceId` | dropdown | Yes | Workspace within selected team (cascading) |
-| `templateId` | dropdown | Yes | PDF template within selected workspace (cascading) |
+| `teamId` | dropdown | Yes | Project selection (cascading) |
+| `workspaceId` | dropdown | Yes | Environment within selected project (cascading) |
+| `templateId` | dropdown | Yes | PDF template within selected environment (cascading) |
 | `filename` | string | No | Custom filename (without .pdf extension) |
 | `variables` | text | No | JSON template variables (legacy) |
 | `var_*` | dynamic | No | Template-specific variable fields |
 
-**Cascading Selection:** The Team → Workspace → Template dropdowns use cascading selection. Each dropdown filters based on the previous selection:
-1. Select a **Team** - lists all teams the user has access to
-2. Select a **Workspace** - lists workspaces within the selected team
-3. Select a **Template** - lists PDF templates within the selected workspace
+**Cascading Selection:** The Project → Environment → Template dropdowns use cascading selection. Each dropdown filters based on the previous selection:
+1. Select a **Project** - lists all projects the user has access to
+2. Select an **Environment** - lists environments within the selected project
+3. Select a **Template** - lists PDF templates within the selected environment
 
 **Dynamic Fields:** When a template is selected, the integration fetches the template's variable schema and generates individual input fields for each variable. Object variables are flattened using `__` notation (e.g., `customer__name`), and array variables become line items.
 
@@ -105,9 +105,9 @@ The Rynko backend must have the following ready:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `teamId` | dropdown | Yes | Team selection (cascading) |
-| `workspaceId` | dropdown | Yes | Workspace within selected team (cascading) |
-| `templateId` | dropdown | Yes | Excel template within selected workspace (cascading) |
+| `teamId` | dropdown | Yes | Project selection (cascading) |
+| `workspaceId` | dropdown | Yes | Environment within selected project (cascading) |
+| `templateId` | dropdown | Yes | Excel template within selected environment (cascading) |
 | `filename` | string | No | Custom filename (without .xlsx extension) |
 | `variables` | text | No | JSON template variables (legacy) |
 | `var_*` | dynamic | No | Template-specific variable fields |
@@ -116,9 +116,9 @@ The Rynko backend must have the following ready:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `teamId` | dropdown | Yes | Team selection (cascading) |
-| `workspaceId` | dropdown | Yes | Workspace within selected team (cascading) |
-| `templateId` | dropdown | Yes | Template within selected workspace (cascading) |
+| `teamId` | dropdown | Yes | Project selection (cascading) |
+| `workspaceId` | dropdown | Yes | Environment within selected project (cascading) |
+| `templateId` | dropdown | Yes | Template within selected environment (cascading) |
 | `format` | dropdown | Yes | Output format (pdf or excel) |
 | `items` | text | Yes | JSON array of variable sets |
 | `batchName` | string | No | Name for the batch job |
@@ -519,10 +519,10 @@ zapier deprecate 1.0.0 2026-06-01
 - Verify Integration API module is deployed on backend
 - Check `/api/v1/integration-api/teams` returns data
 - Ensure OAuth token has correct scopes
-- Verify `altersDynamicFields: true` is set on team/workspace fields
+- Verify `altersDynamicFields: true` is set on project/environment fields
 - Check browser console for API errors during dropdown load
 
-**Workspace Dropdown Shows All Workspaces:**
+**Environment Dropdown Shows All Environments:**
 - Verify `teamId` is being passed to workspace_list search
 - Check that `inputFields` ordering has teamId before workspaceId
 
@@ -581,8 +581,8 @@ zapier describe        # Show triggers, searches, creates
 | `/api/oauth/authorize` | GET | OAuth authorization |
 | `/api/oauth/token` | POST | Token exchange/refresh |
 | `/api/v1/me` | GET | Auth test/user info |
-| `/api/v1/integration-api/teams` | GET | List teams for cascading selection |
-| `/api/v1/integration-api/workspaces` | GET | List workspaces (filtered by teamId) |
+| `/api/v1/integration-api/teams` | GET | List projects for cascading selection |
+| `/api/v1/integration-api/workspaces` | GET | List environments (filtered by teamId) |
 | `/api/v1/integration-api/templates` | GET | List templates (filtered by workspaceId, type) |
 | `/api/v1/documents/generate` | POST | Generate single document |
 | `/api/v1/documents/generate/batch` | POST | Generate batch documents |
@@ -613,8 +613,8 @@ zapier-rynko/
     │   └── generate_batch.js
     ├── searches/               # Search definitions
     │   ├── find_document_job.js
-    │   ├── team_list.js        # Team dropdown (cascading)
-    │   ├── workspace_list.js   # Workspace dropdown (cascading, depends on teamId)
+    │   ├── team_list.js        # Project dropdown (cascading)
+    │   ├── workspace_list.js   # Environment dropdown (cascading, depends on teamId)
     │   ├── template_list.js    # Template dropdown (cascading, depends on workspaceId)
     │   ├── template_list_pdf.js
     │   ├── template_list_excel.js

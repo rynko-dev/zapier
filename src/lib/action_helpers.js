@@ -34,29 +34,29 @@ const fetchTemplates = async (z, format) => {
 };
 
 /**
- * Team selection field - first in the cascade
+ * Project selection field - first in the cascade
  */
 const teamField = {
   key: 'teamId',
-  label: 'Team',
+  label: 'Project',
   type: 'string',
   required: true,
   dynamic: 'team_list.id.name',
   altersDynamicFields: true,
-  helpText: 'Select a team from your Rynko account.',
+  helpText: 'Select a project from your Rynko account.',
 };
 
 /**
- * Workspace selection field - second in the cascade, filtered by team
+ * Environment selection field - second in the cascade, filtered by project
  */
 const workspaceField = {
   key: 'workspaceId',
-  label: 'Workspace',
+  label: 'Environment',
   type: 'string',
   required: true,
   dynamic: 'workspace_list.id.name',
   altersDynamicFields: true,
-  helpText: 'Select a workspace within the selected team.',
+  helpText: 'Select an environment within the selected project.',
 };
 
 /**
@@ -72,7 +72,7 @@ const commonDocumentFields = [
     required: true,
     dynamic: 'template_list.id.name',
     altersDynamicFields: true,
-    helpText: 'Select a template from the selected workspace.',
+    helpText: 'Select a template from the selected environment.',
   },
   {
     key: 'variables',
@@ -112,7 +112,7 @@ const pdfFields = [
     required: true,
     dynamic: 'template_list_pdf.id.name',
     altersDynamicFields: true,
-    helpText: 'Select a PDF template from the selected workspace.',
+    helpText: 'Select a PDF template from the selected environment.',
   },
   {
     key: 'variables',
@@ -152,7 +152,7 @@ const excelFields = [
     required: true,
     dynamic: 'template_list_excel.id.name',
     altersDynamicFields: true,
-    helpText: 'Select an Excel template from the selected workspace.',
+    helpText: 'Select an Excel template from the selected environment.',
   },
   {
     key: 'variables',
@@ -192,7 +192,7 @@ const batchFields = [
     required: true,
     dynamic: 'template_list.id.name',
     altersDynamicFields: true,
-    helpText: 'Select a template from the selected workspace.',
+    helpText: 'Select a template from the selected environment.',
   },
   {
     key: 'format',
